@@ -1,0 +1,53 @@
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Arial","fontSize":"20px","lineColor":"#002D62","edgeLabelBackground":"#FFFFFF"},"flowchart":{"htmlLabels":true,"nodeSpacing":35,"rankSpacing":80,"curve":"linear","useMaxWidth":false}}}%%
+flowchart TB
+    U["users"]:::entity
+    P["posts"]:::entity
+    L["likes"]:::entity
+    H["hashtags"]:::entity
+    J["post_hashtags"]:::entity
+
+    UP{"authors<br/>1:N"}:::relationship
+    UL{"gives<br/>1:N"}:::relationship
+    PL{"receives<br/>1:N"}:::relationship
+    PJ{"has<br/>1:N"}:::relationship
+    HJ{"categorizes<br/>1:N"}:::relationship
+
+    U ---|"(0,N)"| UP
+    UP ---|"(1,1)"| P
+    U ---|"(0,N)"| UL
+    UL ---|"(1,1)"| L
+    P ---|"(0,N)"| PL
+    PL ---|"(1,1)"| L
+    P ---|"(0,N)"| PJ
+    PJ ---|"(1,1)"| J
+    H ---|"(1,N)"| HJ
+    HJ ---|"(1,1)"| J
+
+    uid(["<u>user_id</u>"]):::attribute --- U
+    uname(["display_name"]):::attribute --- U
+    pid(["<u>post_id</u>"]):::attribute --- P
+    pauthor(["author_id (FK)"]):::attribute --- P
+    ptitle(["title"]):::attribute --- P
+    pbody(["body"]):::attribute --- P
+    pactive(["is_active"]):::attribute --- P
+    pcount(["character_count"]):::attribute --- P
+    L --- lid(["<u>like_id</u>"]):::attribute
+    L --- luser(["user_id (FK)"]):::attribute
+    L --- lpost(["post_id (FK)"]):::attribute
+    L --- lat(["liked_at"]):::attribute
+    L --- ldwell(["dwell_ms"]):::attribute
+    hid(["<u>hashtag_id</u>"]):::attribute --- H
+    hname(["name"]):::attribute --- H
+    J --- jpost(["<u>post_id</u> (FK)"]):::attribute
+    J --- jhash(["<u>hashtag_id</u> (FK)"]):::attribute
+
+    classDef entity fill:#002D62,color:#FFFFFF,stroke:#002D62,stroke-width:2px,font-weight:bold
+    classDef relationship fill:#D22630,color:#FFFFFF,stroke:#A41D25,stroke-width:2px
+    classDef attribute fill:#F1F4F8,color:#002D62,stroke:#002D62,stroke-width:1.5px
+
+%% Diamond labels show maximum cardinality ratios (1:N).
+%% Counts beside an entity show its own (minimum, maximum) participation.
+%% Users-posts liking is N:M through likes; posts-hashtags is N:M through post_hashtags.
+%% Underlined post_hashtags attributes form one composite primary key.
+%% erd.svg is the editable, manually arranged version with true attribute ellipses.
+%% Mermaid regenerates the same relationship model with its automatic layout.
