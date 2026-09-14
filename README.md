@@ -19,7 +19,7 @@ The interaction data will support questions such as which posts receive the most
 
 ![Entity relationship diagram for the MLB Fan Social Platform](schema/erd.png)
 
-The diagram uses rectangles for entities, ovals for attributes, underlined primary keys, and diamonds for relationships. It shows both relationship types and minimum/maximum participation. See the [diagram guide](schema/erd-guide.md) for a walkthrough.
+The diagram uses rectangles for entities, ovals for attributes, underlined primary keys, and diamonds for relationships. It shows both relationship types and minimum/maximum participation. 
 
 Editable sources: [Mermaid model](schema/erd.mmd) · [Arranged vector diagram](schema/erd.svg).
 
