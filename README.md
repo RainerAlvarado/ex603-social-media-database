@@ -5,7 +5,7 @@ A relational database design for a platform where Major League Baseball fans sha
 **Theme:** Social Media — Major League Baseball  
 **Author:** [RainerAlvarado](https://github.com/RainerAlvarado)  
 **Course:** EX603 Data and Algorithms for Scalable Systems, Boston University  
-**Status:** Schema implemented in PostgreSQL; queries will follow.
+**Status:** Schema implemented in PostgreSQL; Unit 3 retrieval and filtering queries complete.
 
 ## Domain
 
@@ -45,6 +45,29 @@ Design decisions worth noticing:
 
 Constraint reasoning, including each `ON DELETE` choice and every `CHECK`, is in [`analysis/unit2.md`](analysis/unit2.md).
 
+## Queries
+
+### Unit 3: Interrogating the Data
+
+Unit 3 audits a dashboard figure that claimed about half of all reactions end in a spam removal. The queries are in [`queries/unit3/`](queries/unit3/), and the plain-language finding is in [`analysis/unit3-finding.md`](analysis/unit3-finding.md).
+
+These queries run against the **course-provided Social Media dataset** (`social.sql`, loaded into a database named `ex603_data`), not the schema in `schema/schema.sql`. The provided dataset uses the same five roles but has its own columns, such as `likes.reaction_status`, `likes.removal_reason`, and `posts.like_count`.
+
+| File | What it does |
+|---|---|
+| [`q3_1.sql`](queries/unit3/q3_1.sql) | Explores the data: visible, well-liked posts; reaction statuses and removal reasons; range and list filters; pattern matching; missing values; computed columns with `CASE`. |
+| [`q3_2.sql`](queries/unit3/q3_2.sql) | Reproduces and repairs two bugs: a filter that silently drops rows with no removal reason, and a `WHERE` clause that references an alias before it exists. |
+| [`q3_3.sql`](queries/unit3/q3_3.sql) | Answers one question three ways (`IN` subquery, CTE, `EXISTS`), proves the results match row for row, and shows where `NOT IN` and `NOT EXISTS` stop agreeing. |
+
+What the audit found:
+
+- The dataset holds 200 reactions: 156 active, 10 flagged for review, and 34 removed.
+- Only 12 of the 34 removals were for spam, so the real spam-removal rate is 6 percent, not about half.
+- 166 reactions have no removal reason. A "not equal to" filter on that column leaves all of them out without an error, which is how a small slice of the data came to look like the whole.
+- The repaired filter accounts for every row: 188 not removed as spam plus 12 spam equals 200.
+
+Each query has a comment header stating the requirement it answers and the question it asks. Screenshots of every query with its output are in [`screenshots/`](screenshots/), in files named `u3_*.png`.
+
 ## Design Documentation
 
 - [Schema definition](schema/schema-definition.md) — all five relations, attributes, domains, and primary keys.
@@ -52,3 +75,5 @@ Constraint reasoning, including each `ON DELETE` choice and every `CHECK`, is in
 - [Modeling justification and reflection](analysis/unit1.md) — the reasoning behind the design and its tradeoffs.
 - [Schema DDL](schema/schema.sql) — the PostgreSQL script that creates the full schema.
 - [Implementation reasoning](analysis/unit2.md) — creation order, ON DELETE choices, CHECK constraints, and changes from Unit 1.
+- [Unit 3 queries](queries/unit3/) — exploration, bug reproduction and repair, and three equivalent query forms.
+- [Unit 3 finding](analysis/unit3-finding.md) — memo to the dashboard team on the spam-removal rate.
