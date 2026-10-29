@@ -5,7 +5,7 @@ A relational database design for a platform where Major League Baseball fans sha
 **Theme:** Social Media — Major League Baseball  
 **Author:** [RainerAlvarado](https://github.com/RainerAlvarado)  
 **Course:** EX603 Data and Algorithms for Scalable Systems, Boston University  
-**Status:** Schema implemented in PostgreSQL; Unit 3 retrieval and filtering queries complete.
+**Status:** Schema implemented in PostgreSQL; Unit 3 retrieval and filtering queries and Unit 4 aggregation queries complete.
 
 ## Domain
 
@@ -68,6 +68,30 @@ What the audit found:
 
 Each query has a comment header stating the requirement it answers and the question it asks. Screenshots of every query with its output are in [`screenshots/`](screenshots/), in files named `u3_*.png`.
 
+### Unit 4: From Rows to Insight
+
+Unit 4 answers leadership's follow-up to the Unit 3 audit: what is the actual failure rate, and which producers contribute most to it? The queries are in [`queries/unit4/`](queries/unit4/), the write-ups and reflection in [`analysis/unit4.md`](analysis/unit4.md), and the plain-language breakdown for leadership in [`analysis/unit4-finding.md`](analysis/unit4-finding.md). Same `ex603_data` dataset as Unit 3. Metric: `likes.dwell_ms`. Failure: a reaction removed as spam. Region: `likes.client_country`.
+
+| File | Query | Business question |
+|---|---|---|
+| [`q4_1.sql`](queries/unit4/q4_1.sql) | 4.1-1 Platform baseline | How many reactions are there, what are the total, average, min and max dwell times, and how many distinct users and posts are involved? |
+| | 4.1-1b Zero-dwell follow-up | Why is the minimum dwell zero, and which reactions carry it? |
+| | 4.1-2 Per producer | How many reactions and what average dwell does each post have, most active first? |
+| | 4.1-3 Volume threshold | Which posts have enough reactions (at least 10) for a rate to be meaningful? |
+| | 4.1-4 Region x post | For each region and post, how many reactions and what dwell statistics? |
+| [`q4_2.sql`](queries/unit4/q4_2.sql) | 4.2-A Conditional aggregation | In one pass, how many reactions did each post get and how many were removed as spam? |
+| | 4.2-B Subtotals and grand total | What are the per-region subtotals and the platform grand total, without detail rows? |
+| | 4.2-C Two-step pipeline | What spam rate should a high-volume post be measured against, and which high-volume posts exceed it? |
+
+What the analysis found:
+
+- The platform-wide spam-removal rate is 12 of 200 reactions, 6 percent, confirmed by counting failures and totals in the same pass.
+- Post_02 (3 of 16, 18.8 percent) and Post_03 (2 of 13, 15.4 percent) are the producers to investigate. Post_04 shows 16.7 percent on only 6 reactions and is watched, not investigated.
+- Among the eight high-volume posts (16 or more reactions), the pooled baseline is 4.8 percent; Post_02 is 3.9 times that.
+- Every removed reaction has `dwell_ms = 0`, so any dwell average that includes removed rows is understated by about 17 percent.
+
+Each query has a comment header stating the requirement it answers and the question it asks. Screenshots are in [`screenshots/`](screenshots/), in files named `u4_*.png`.
+
 ## Design Documentation
 
 - [Schema definition](schema/schema-definition.md) — all five relations, attributes, domains, and primary keys.
@@ -77,3 +101,6 @@ Each query has a comment header stating the requirement it answers and the quest
 - [Implementation reasoning](analysis/unit2.md) — creation order, ON DELETE choices, CHECK constraints, and changes from Unit 1.
 - [Unit 3 queries](queries/unit3/) — exploration, bug reproduction and repair, and three equivalent query forms.
 - [Unit 3 finding](analysis/unit3-finding.md) — memo to the dashboard team on the spam-removal rate.
+- [Unit 4 queries](queries/unit4/) — aggregation, grouping, HAVING, conditional aggregation, grouping sets, and a CTE pipeline.
+- [Unit 4 write-up](analysis/unit4.md) — Task 4.1 and 4.2 write-ups and the reflection on conditional aggregation.
+- [Unit 4 finding](analysis/unit4-finding.md) — breakdown for leadership on the true failure rate and which posts to investigate.
